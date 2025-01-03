@@ -1,6 +1,7 @@
 # Part 1 is a set of coding problems solved with the use of list comprehension. The specific problems solved are detailed below.
 # Part 2 is a set of coding problems solved with the use of higher order functions, an iterator, and a generator.
-# At the end of the document, there are tests for each coding problem. There are test functions for Part 1 and doctests for Part 2.
+# Part 3 is a set of coding problems solved with functions.
+# At the end of the document, there are tests for each coding problem. There are test functions for Part 1 & 3 and doctests for Part 2.
 
 
 
@@ -146,7 +147,7 @@ class Dual_Iterator:
         self.isReversing = False
 
     
-    def __iter__(self):  # Do not modify
+    def __iter__(self):
         return self
 
     
@@ -218,6 +219,55 @@ def frange(*args):
 
 
 
+# ========= PART 3 ================
+
+# The goal of the function, find_cycle_length, is to find the length of the cycle that appears in the given linked list.
+# If no cycle is found, -1 is returned.
+
+class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val = val
+        self.next = next
+
+def find_cycle_length(head):
+    traversed = []
+    current = head
+    while current is not None:
+        for i in range(len(traversed)):
+            if traversed[i] == current:
+                return len(traversed) - i  # return length of cycle
+        traversed.append(current)
+        current = current.next
+
+    return -1   # -1 is returned if there is no cycle
+
+
+# The goal of the function, findSmallestIndex, is to find the smallest index where all elements after it are strictly greater than the given target value.
+# Note that the indexing starts at 1 (in the return value), as opposed to how in Python it starts at 0.
+
+def findSmallestIndex(nums, target):
+    # Start by tracking the minimum value
+    min_after = nums[len(nums)-1]
+
+    # Traverse the array from the second to last element to the first
+    for i in range(len(nums)-2,-1,-1):
+        
+        # Update the minimum value after index i
+        if nums[i+1] < min_after:
+            min_after = nums[i+1]
+        
+        
+        if min_after <= target:
+            # No such index found
+            if i + 2 == len(nums):
+                return -1
+            
+            # Found the smallest index where all elements after it are strictly greater than the target
+            else:
+                return i + 2
+            
+    return -1 # Returns -1 if no such index is found
+
 
 # ========= TESTING ASSERTIONS FOR PART 1 ================
 
@@ -250,21 +300,64 @@ def test_get_nonzero():
     print('All cases for get_non_zero passed!')
 
 
+# ========= TESTING ASSERTIONS FOR PART 3 ================
+
+def test_find_cycle_length():
+    node5a = ListNode(5)
+    node4a = ListNode(4, node5a)
+    node3a = ListNode(3, node4a)
+    node2a = ListNode(2, node3a)
+    node1a = ListNode(1, node2a)
+    node5a.next = node3a
+    # The result should be a linked list with a cycle of length 3
+    # 1 -> 2 -> 3 -> 4 -> 5 -> 3
+
+    assert find_cycle_length(node1a) == 3
+
+    node3b = ListNode(3)
+    node2b = ListNode(2, node3b)
+    node1b = ListNode(1, node2b)
+
+    # The result should be a linked list with no cycle
+    # 1 -> 2 -> 3
+
+    assert find_cycle_length(node1b) == -1
+
+    print('All cases for test_find_cycle_length passed!')
+
+def test_findSmallestIndex():
+    list1 = [1,2,3,4,5,6]
+    assert findSmallestIndex(list1,5) == 5
+    list2 = [5,4,3,2,1,0]
+    assert findSmallestIndex(list2,6) == -1
+    list3 = [3,2,3,3,5,6]
+    assert findSmallestIndex(list3,3) == 4
+
+    print('All cases for findSmallestIndex passed!')
+
+
 # ========= TESTING ================
 
 def run_tests():
-    # Part 1
-    #-- Uncomment each test function
+    ## Part 1
+    # -- Uncomment each test function
     #test_vector_plus_one()
     #test_collatz_steps()
     #test_exchange_matrix()
     #test_get_nonzero()
 
-    # Part 2
+    ## Part 2
     import doctest    
     # -- Run tests per function - Uncomment the next line to run doctest by function. Replace mulDigits with the name of the function you want to test
     #doctest.run_docstring_examples(mulDigits, globals(), name='CodingProblems',verbose=True) 
+
+    # Run tests on all of Part 2 - Uncomment the next line
     #doctest.testmod(verbose=True)  
+
+    ## Part 3
+    # -- Uncomment each test function
+    #test_find_cycle_length()
+    #test_findSmallestIndex()
 
 # Uncomment to run tests
 #if __name__ == "__main__":
